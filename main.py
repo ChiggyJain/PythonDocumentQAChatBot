@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 from backend.api.v1.core import MysqlDB
-from backend.api.v1.routes import chat_routes, pdf_routes
+from backend.api.v1.routes import chat_routes
+from backend.api.v1.routes import pdf_routes
 
 # initialize the app
 app = FastAPI(

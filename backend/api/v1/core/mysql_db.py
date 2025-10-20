@@ -7,7 +7,7 @@ load_dotenv()
 import os
 
 
-class mysql_db:
+class MysqlDB:
 
     pool = None
 
