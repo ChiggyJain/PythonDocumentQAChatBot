@@ -16,7 +16,7 @@ class ChatBotAgent:
     # Initialize OpenAI model via Agno
     def __init__(self):
         self.agent: Agent = Agent(
-            model=OpenAIChat()
+            model=OpenAIChat(),
         )
         # Internal session memory (dictionary: session_id -> messages)
         self.sessions: dict[str, list[str]] = {}
@@ -46,7 +46,7 @@ class ChatBotAgent:
             # async for token in self.agent.stream(prompt):
             async for response_token in self.agent.arun(input=prompt, stream=True):    
                 # Yield token to the caller (FastAPI StreamingResponse)
-                print(f"response_token.content: {response_token.content}\n")
+                # print(f"response_token.content: {response_token.content}\n")
                 yield response_token.content
                 # Also append to session for chat history
                 if self.sessions[session_id]:

@@ -52,7 +52,7 @@ async def ask_chat(chat_request: ChatRequest):
     async def event_stream():
         async for token in generate_response_tokens(prompt=prompt, session_id=session_id):
             # Yield tokens as Server-Sent Events (SSE)
-            print(f"event_stream Token: {token}\n")
+            # print(f"event_stream Token: {token}\n")
             yield f"data: {token}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")

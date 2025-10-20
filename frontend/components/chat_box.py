@@ -33,17 +33,32 @@ class ChatBox:
 
         """Add streaming AI message chunks (token by token)."""
 
-        if not self.chat_messages or (self.chat_messages[-1][0]).lower() != 'ai':
-            # Start a new AI message
+        # print(f"self.chat_messages: {self.chat_messages}\n")
+
+        # First AI message
+        if not self.chat_messages or self.chat_messages[-1][0].lower() != 'ai':
+
             self.chat_messages.append(('ai', token))
             with self.container:
                 self.last_ai_label = ui.label(f'AI: {token}').classes('text-blue-600 font-semibold')
+
         else:
-            # Append to the last AI message dynamically
-            prev_text = self.chat_messages[-1][1] + token
-            self.chat_messages[-1] = ('ai', prev_text)
-            if self.last_ai_label:
-                self.last_ai_label.text = f'AI: {prev_text}'
+
+            # Append to last AI message with proper spacing
+            last_text = self.chat_messages[-1][1]
+
+            # Add a space if last char is not whitespace and token starts with alphanumeric
+            if last_text and not last_text[-1].isspace() and len(token)>0 and token[0].isalnum():
+                token = " " + token
+
+            # Update chat message history
+            self.chat_messages[-1] = ('ai', last_text + token)
+
+            # Update the UI label dynamically
+            if hasattr(self, 'last_ai_label') and self.last_ai_label is not None:
+                self.last_ai_label.text = f'AI: {self.chat_messages[-1][1]}'
+
+
 
     def clear_chat(self):
 
