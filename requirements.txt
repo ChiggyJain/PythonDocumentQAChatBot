@@ -1,0 +1,33 @@
+
+# Backend Framework
+fastapi==0.118.0
+uvicorn[standard]==0.23.2
+
+# AI Agent
+agno==1.3.4   # Official latest Agno release, includes OpenAI integration
+
+# Frontend UI
+nicegui==2.18.0
+
+# PDF Parsing
+PyMuPDF>=1.25.2
+pdfminer.six==20250506
+
+# Async DB Connection (optional if using MySQL)
+aiomysql==0.1.1
+
+# Env file management
+python-dotenv==1.1.1
+
+# Data structures / utils
+pydantic==2.2.1
+
+# HTTP requests (for frontend to call backend)
+httpx==0.28.1
+
+# Logging (optional but recommended)
+loguru==0.7.3
+
+# Testing
+pytest==8.3.0
+pytest-check==2.1.3
