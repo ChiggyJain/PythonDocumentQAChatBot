@@ -8,14 +8,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 load_dotenv()
-from backend.api.v1.core import MysqlDB
+from backend.api.v1.core.mysql_db import MysqlDB
 from backend.api.v1.routes import chat_routes
 # from backend.api.v1.routes import pdf_routes
 
 # initialize the app
 app = FastAPI(
     title="DocumentQAChatBot APIs",
-    description="Backend APIs for document-based QA chatbot system",
+    description="Backend APIs for document-based QA chatbot system",    
     version="1.0.0",
 )
 

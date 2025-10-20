@@ -24,7 +24,7 @@ async def generate_response_tokens(prompt: str, session_id: str | None = None) -
         async for token in chat_agent.get_response(prompt=prompt, session_id=session_id):
             yield token
     except Exception as e:
-        yield f"[ERROR] AI Agent failed: {str(e)}"
+        yield f"[ERROR] generate_response_tokens AI Agent failed: {str(e)}"
 
 
 
@@ -40,6 +40,8 @@ async def ask_chat(chat_request: ChatRequest):
     }
     """
 
+    print(f"chat_request: {chat_request}\n")
+
     prompt = chat_request.prompt
     session_id = chat_request.session_id
 
@@ -50,6 +52,7 @@ async def ask_chat(chat_request: ChatRequest):
     async def event_stream():
         async for token in generate_response_tokens(prompt=prompt, session_id=session_id):
             # Yield tokens as Server-Sent Events (SSE)
+            print(f"event_stream Token: {token}\n")
             yield f"data: {token}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
@@ -58,7 +61,7 @@ async def ask_chat(chat_request: ChatRequest):
 
 @router.get("/history/{session_id}", response_model=list[ChatResponse])
 async def get_chat_history(session_id: str):
-    
+
     """
     Retrieve full chat session history for a given session_id
     """

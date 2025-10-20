@@ -34,8 +34,9 @@ with ui.row():  # Horizontal row layout
 # Handle Send button click
 def on_send_click():
     prompt = prompt_input.value
+    sessionId = "ChiragTest123"
     if prompt.strip() != "":
-        asyncio.create_task(chat_box.send_prompt_to_backend(prompt))
+        asyncio.create_task(chat_box.send_prompt_to_backend(prompt, sessionId))
         prompt_input.value = ""  # clear input
 
 send_button.on("click", on_send_click)

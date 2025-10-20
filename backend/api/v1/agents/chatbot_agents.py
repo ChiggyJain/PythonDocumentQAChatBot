@@ -1,6 +1,6 @@
 
 from agno.agent import Agent
-from agno.models.openai import OpenAI
+from agno.models.openai import OpenAIChat
 from typing import AsyncGenerator
 from dotenv import load_dotenv
 load_dotenv()
@@ -16,8 +16,7 @@ class ChatBotAgent:
     # Initialize OpenAI model via Agno
     def __init__(self):
         self.agent: Agent = Agent(
-            model=OpenAI(),
-            verbose=False
+            model=OpenAIChat()
         )
         # Internal session memory (dictionary: session_id -> messages)
         self.sessions: dict[str, list[str]] = {}
@@ -44,18 +43,20 @@ class ChatBotAgent:
         # Send prompt to Agno agent (async streaming)
         # Agno returns async generator of tokens
         try:
-            async for token in self.agent.stream(prompt):
+            # async for token in self.agent.stream(prompt):
+            async for response_token in self.agent.arun(input=prompt, stream=True):    
                 # Yield token to the caller (FastAPI StreamingResponse)
-                yield token
+                print(f"response_token.content: {response_token.content}\n")
+                yield response_token.content
                 # Also append to session for chat history
                 if self.sessions[session_id]:
                     last_msg = self.sessions[session_id][-1]
                     if last_msg.startswith("AI:"):
-                        self.sessions[session_id][-1] += token
+                        self.sessions[session_id][-1] += response_token.content
                     else:
-                        self.sessions[session_id].append(f"AI:{token}")
+                        self.sessions[session_id].append(f"AI:{response_token.content}")
         except Exception as e:
-            yield f"[ERROR] Agent failed: {str(e)}"
+            yield f"[ERROR] get_response Agent failed: {str(e)}"
 
 
     def get_history(self, session_id: str) -> list[str]:

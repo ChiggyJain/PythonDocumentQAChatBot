@@ -48,7 +48,7 @@ class ChatBox:
     def clear_chat(self):
 
         """Clear all chat messages and reset the UI."""
-        
+
         self.chat_messages = []
         if self.container:
             self.container.clear()
@@ -79,4 +79,4 @@ class ChatBox:
                             self.add_ai_message_chunk(token)
 
             except Exception as e:
-                self.add_ai_message_chunk(f"[ERROR] Backend call failed: {str(e)}")
+                self.add_ai_message_chunk(f"[ERROR] send_prompt_to_backend backend call failed: {str(e)}")
