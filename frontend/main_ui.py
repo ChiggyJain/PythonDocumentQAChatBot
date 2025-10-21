@@ -7,7 +7,7 @@ import asyncio
 
 ## user details after login simmulation
 userId = 11
-userSessionId = 111
+userSessionId = "111"
 
 # initialize shared components
 status_box = StatusBox()  # Handles async status updates

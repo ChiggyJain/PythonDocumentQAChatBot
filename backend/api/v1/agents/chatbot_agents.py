@@ -35,6 +35,8 @@ class ChatBotAgent:
         if userId not in self.sessions:
             self.sessions[userId] = {}
             self.sessions[userId][userSessionId] = []
+        elif userSessionId not in self.sessions[userId]:
+            self.sessions[userId][userSessionId] = []
 
         # Append user prompt to history
         self.sessions[userId][userSessionId].append(f"User: {prompt}")
@@ -58,22 +60,28 @@ class ChatBotAgent:
             yield f"[ERROR] get_response Agent failed: {str(e)}"
 
 
-    def get_history(self, session_id: str) -> list[str]:
+    def get_history(self, userId: int, userSessionId: str|int) -> list[str]:
         
         """
         Return full chat history for a session.
         """
 
-        if session_id not in self.sessions:
+        if userId not in self.sessions:
             return []
-        return self.sessions[userId][userSessionId]
+        elif userSessionId not in self.sessions[userId]:
+            return []
+        else:
+            return self.sessions[userId][userSessionId]
 
 
-    def reset_session(self, session_id: str):
+    def reset_session(self, userId: int, userSessionId: str|int):
 
         """
         Clear session history.
         """
 
-        if session_id in self.sessions:
-            self.sessions[userId][userSessionId] = []
+        if userId in self.sessions:
+            if userSessionId in self.sessions[userId]:
+                self.sessions[userId][userSessionId] = []
+
+        
