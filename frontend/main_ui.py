@@ -5,11 +5,13 @@ from components.upload_box import UploadBox
 from components.status_box import StatusBox
 import asyncio
 
-
+## user details after login simmulation
+userId = 11
+userSessionId = 111
 
 # initialize shared components
 status_box = StatusBox()  # Handles async status updates
-chat_box = ChatBox()  # Handles chat messages & streaming tokens
+chat_box = ChatBox(userId, userSessionId)  # Handles chat messages & streaming tokens
 upload_box = UploadBox(status_box=status_box, chat_box=chat_box)  # Handles PDF upload
 
 

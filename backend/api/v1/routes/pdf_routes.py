@@ -52,14 +52,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         # print(f"parsed_file_result_dict: {parsed_file_result_dict}\n")
         if len(parsed_file_result_dict['allPagesDetails'])<=0:
             raise HTTPException(status_code=400, detail="PDF contains no readable text.")
-        # adding knowledge to agent
-        agent_instance.agent.add_knowledge(
-            content=parsed_file_result_dict['content'],
-            source=parsed_file_result_dict["fileName"],
-            metadata={
-                "page_count": parsed_file_result_dict["totalPageCount"], "file_type": "pdf"
-            }
-        )
+        
         # returning response
         return JSONResponse(
             status_code=200,

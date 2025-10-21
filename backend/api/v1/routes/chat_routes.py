@@ -14,14 +14,14 @@ chat_agent = ChatBotAgent()
 
 
 
-async def generate_response_tokens(prompt: str, session_id: str | None = None) -> AsyncGenerator[str, None]:
+async def generate_response_tokens(prompt: str, userId: int, userSessionId: str|int) -> AsyncGenerator[str, None]:
     
     """
     Calls the AI agent asynchronously and yields tokens one by one.
     """
 
     try:
-        async for token in chat_agent.get_response(prompt=prompt, session_id=session_id):
+        async for token in chat_agent.get_response(prompt=prompt, userId=userId, userSessionId=userSessionId):
             yield token
     except Exception as e:
         yield f"[ERROR] generate_response_tokens AI Agent failed: {str(e)}"
@@ -42,15 +42,16 @@ async def ask_chat(chat_request: ChatRequest):
 
     print(f"chat_request: {chat_request}\n")
 
+    userId = chat_request.userId
+    userSessionId = chat_request.userSessionId
     prompt = chat_request.prompt
-    session_id = chat_request.session_id
 
     if not prompt or prompt.strip() == "":
         raise HTTPException(status_code=400, detail="Prompt cannot be empty")
 
     # Token generator function for StreamingResponse
     async def event_stream():
-        async for token in generate_response_tokens(prompt=prompt, session_id=session_id):
+        async for token in generate_response_tokens(prompt=prompt, userId=userId, userSessionId=userSessionId):
             # Yield tokens as Server-Sent Events (SSE)
             # print(f"event_stream Token: {token}\n")
             yield f"data: {token}\n\n"

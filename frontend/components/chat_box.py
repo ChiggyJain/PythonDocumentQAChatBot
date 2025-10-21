@@ -7,8 +7,10 @@ from nicegui import ui
 class ChatBox:
 
 
-    def __init__(self):
+    def __init__(self, userId:int, userSessionId: str|int):
         """Initialize chat storage and UI references."""
+        self.userId = userId
+        self.userSessionId = userSessionId
         self.chat_messages = []   # List of tuples: (sender, message)
         self.container = None   # Main chat container (ui.column)
         self.last_ai_label = None  # Keep track of the last AI label for streaming updates
@@ -36,8 +38,9 @@ class ChatBox:
         message = self.input_box.value.strip()
         if not message:
             return
-        self.add_user_message(message)
         self.input_box.value = ""
+        await self.send_prompt_to_backend(message, self.userId, self.userSessionId)
+        
 
 
     def disable_input(self):
@@ -104,7 +107,7 @@ class ChatBox:
             self.container.clear()
 
 
-    async def send_prompt_to_backend(self, prompt: str, session_id: str | None = None):
+    async def send_prompt_to_backend(self, prompt: str, userId: int,  userSessionId: str|int):
         """
         Sends prompt to FastAPI backend streaming endpoint
         and updates chat container token by token.
@@ -114,7 +117,7 @@ class ChatBox:
         async with httpx.AsyncClient(timeout=None) as client:
             try:
                 # POST request with JSON payload
-                async with client.stream("POST", url, json={"prompt": prompt, "session_id": session_id}) as response:
+                async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "session_id": userSessionId}) as response:
                     if response.status_code != 200:
                         self.add_ai_message_chunk(f"[ERROR] {response.text}")
                         return
