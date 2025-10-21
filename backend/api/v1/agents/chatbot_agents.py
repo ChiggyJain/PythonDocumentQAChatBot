@@ -28,7 +28,6 @@ class ChatBotAgent:
 
         """
         Stream AI response token by token.
-        If session_id is provided, maintains conversation history.
         """
 
         # Initialize session history if not exists
@@ -53,7 +52,7 @@ class ChatBotAgent:
                 if self.sessions[userId][userSessionId]:
                     last_msg = self.sessions[userId][userSessionId][-1]
                     if last_msg.startswith("AI:"):
-                        self.sessions[userId][userSessionId][-1] += response_token.content
+                        self.sessions[userId][userSessionId][-1]+= response_token.content
                     else:
                         self.sessions[userId][userSessionId].append(f"AI:{response_token.content}")
         except Exception as e:
