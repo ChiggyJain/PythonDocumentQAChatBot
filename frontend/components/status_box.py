@@ -12,7 +12,7 @@ class StatusBox:
     
     # render status container
     def render(self):
-        self.container = ui.label("Status:").style('color: blue; font-weight: bold;')
+        self.container = ui.label("").style('color: blue; font-weight: bold;')
     
     # update status message
     def set_status(self, stage: str):

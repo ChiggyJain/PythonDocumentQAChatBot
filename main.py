@@ -10,7 +10,7 @@ import os
 load_dotenv()
 from backend.api.v1.core.mysql_db import MysqlDB
 from backend.api.v1.routes import chat_routes
-# from backend.api.v1.routes import pdf_routes
+from backend.api.v1.routes import pdf_routes
 
 # initialize the app
 app = FastAPI(
@@ -35,7 +35,7 @@ app.add_middleware(
 
 # Include API Routes
 app.include_router(chat_routes.router, prefix="/api/v1/chat", tags=["Chat"])
-# app.include_router(pdf_routes.router, prefix="/api/v1/pdf", tags=["PDF"])
+app.include_router(pdf_routes.router, prefix="/api/v1/pdf", tags=["PDF"])
 
 # app startup events
 # database open connections
