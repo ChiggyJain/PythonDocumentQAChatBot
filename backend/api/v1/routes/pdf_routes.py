@@ -5,12 +5,13 @@ from fastapi.responses import JSONResponse
 from datetime import datetime
 from pathlib import Path
 from backend.api.v1.services.pdf_parser_service import parse_pdf
-#from backend.api.v1.agents.chatbot_agents import ChatBotAgent
-
+from backend.api.v1.agents.chatbot_agents import ChatBotAgent
 
 # Router initialization
 router = APIRouter()
 
+### agent instannce
+agent_instance = ChatBotAgent()
 
 # Folder where PDFs will be stored
 CURRENT_FILE = os.path.abspath(__file__)
@@ -47,15 +48,23 @@ async def upload_pdf(file: UploadFile = File(...)):
             f.write(file_bytes)
         ### parsing the pdf file
         toParseFilePath = Path(DATA_DIR)/filename
-        parsed_text = parse_pdf(toParseFilePath)
-        print(f"parsed_text: {parsed_text}\n")
-        if not parsed_text.strip():
+        parsed_file_result_dict = parse_pdf(toParseFilePath)
+        # print(f"parsed_file_result_dict: {parsed_file_result_dict}\n")
+        if len(parsed_file_result_dict['allPagesDetails'])<=0:
             raise HTTPException(status_code=400, detail="PDF contains no readable text.")
+        # adding knowledge to agent
+        agent_instance.agent.add_knowledge(
+            content=parsed_file_result_dict['content'],
+            source=parsed_file_result_dict["fileName"],
+            metadata={
+                "page_count": parsed_file_result_dict["totalPageCount"], "file_type": "pdf"
+            }
+        )
         # returning response
         return JSONResponse(
             status_code=200,
             content={
-                "message": f"File '{file.filename}' uploaded successfully.",
+                "message": f"File '{file.filename}' uploaded successfully and read for QA.",
                 "saved_as": filename,
                 "path": file_path,
             },

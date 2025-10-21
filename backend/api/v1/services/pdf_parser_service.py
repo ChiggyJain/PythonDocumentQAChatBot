@@ -19,7 +19,8 @@ def parse_pdf(file_path: Path) -> Dict[str, Any]:
     if not file_path.exists():
         raise ValueError(f"File does not exist: {file_path}") 
     totalPageCount = 0
-    all_pages = []
+    allPagesDetails = []
+    allPagesContent = []
     try:
         with fitz.open(file_path) as pdf:
             totalPageCount = pdf.page_count
@@ -27,7 +28,8 @@ def parse_pdf(file_path: Path) -> Dict[str, Any]:
                 raise ValueError("PDF has no pages.")
             for page_number, page in enumerate(pdf, start=1):
                 if page.get_text().strip():
-                    all_pages.append({
+                    allPagesContent.append(page.get_text().strip())
+                    allPagesDetails.append({
                         "pageNo": page_number,
                         "pageContent": page.get_text().strip()
                     })
@@ -36,9 +38,10 @@ def parse_pdf(file_path: Path) -> Dict[str, Any]:
                 "filePath": str(file_path.resolve()),
                 "fileName": file_path.name,
                 "fileExtension": file_path.suffix,
-                "totalPageCount": totalPageCount
+                "totalPageCount": totalPageCount,
+                "content" : "\n\n".join(allPagesContent)
             },
-            "allPagesDetails": all_pages
+            "allPagesDetails": allPagesDetails
         }
         return result
     except Exception as e:
