@@ -7,7 +7,7 @@ from nicegui import ui
 class ChatBox:
 
 
-    def __init__(self, userId:int, userSessionId: str|int):
+    def __init__(self, userId:str, userSessionId:str):
         """Initialize chat storage and UI references."""
         self.userId = userId
         self.userSessionId = userSessionId
@@ -107,7 +107,7 @@ class ChatBox:
             self.container.clear()
 
 
-    async def send_prompt_to_backend(self, prompt: str, userId: int,  userSessionId: str|int):
+    async def send_prompt_to_backend(self, prompt: str, userId:str,  userSessionId:str):
         """
         Sends prompt to FastAPI backend streaming endpoint
         and updates chat container token by token.

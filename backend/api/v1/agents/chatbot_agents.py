@@ -14,17 +14,19 @@ class ChatBotAgent:
     """
 
     # Initialize OpenAI model via Agno
-    def __init__(self):
+    def __init__(self, userId:str=None, userSessionId:str=None):
         self.agent: Agent = Agent(
             model=OpenAIChat(),
-            name="Document QA Chatbot System Agent"
+            name="Document QA Chatbot System Agent",
+            user_id=str(12),
+            session_id=str(111)
         )
         # Internal user-wise session memory (dictionary: session_id -> messages)
         self.sessions: dict[str, dict[str, list[str]]] = {}
         print(f"self.agent: {self.agent}\n")
 
 
-    async def get_response(self, prompt: str, userId: int, userSessionId: str|int) -> AsyncGenerator[str, None]:
+    async def get_response(self, prompt:str, userId:str, userSessionId:str) -> AsyncGenerator[str, None]:
 
         """
         Stream AI response token by token.
@@ -59,7 +61,7 @@ class ChatBotAgent:
             yield f"[ERROR] get_response Agent failed: {str(e)}"
 
 
-    def get_history(self, userId: int, userSessionId: str|int) -> list[str]:
+    def get_history(self, userId:str, userSessionId:str) -> list[str]:
         
         """
         Return full chat history for a session.
@@ -73,7 +75,7 @@ class ChatBotAgent:
             return self.sessions[userId][userSessionId]
 
 
-    def reset_session(self, userId: int, userSessionId: str|int):
+    def reset_session(self, userId:str, userSessionId:str):
 
         """
         Clear session history.

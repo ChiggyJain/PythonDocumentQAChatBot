@@ -8,13 +8,13 @@ from typing import AsyncGenerator
 
 router = APIRouter()
 chat_agent = ChatBotAgent()
+print(f"chat_agent-instances-id: {id(chat_agent)}\n")
 
 
 
 
 
-
-async def generate_response_tokens(prompt: str, userId: int, userSessionId: str|int) -> AsyncGenerator[str, None]:
+async def generate_response_tokens(prompt: str, userId:str, userSessionId:str) -> AsyncGenerator[str, None]:
     
     """
     Calls the AI agent asynchronously and yields tokens one by one.
