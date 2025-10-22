@@ -13,7 +13,7 @@ class ChatBox:
         """Initialize chat storage and UI references."""
         self.userId = userId
         self.userSessionId = userSessionId
-        self.chat_messages = []   # List of tuples: (sender, message)
+        self.user_session_chat_messages = {}
         self.container = None   # Main chat container (ui.column)
         self.last_ai_label = None  # Keep track of the last AI label for streaming updates
         self.input_box = None
@@ -41,7 +41,7 @@ class ChatBox:
         if not message:
             return
         self.input_box.value = ""
-        self.add_user_message(message)
+        self.add_user_message(self.userId, self.userSessionId, message)
         await self.send_prompt_to_backend(message, self.userId, self.userSessionId)
         
 
@@ -63,33 +63,37 @@ class ChatBox:
 
 
 
-    def add_user_message(self, message: str):
+    def add_user_message(self, userId:str, userSessionId:str, message:str):
         """Add a user message to the chatbox container."""
-        self.chat_messages.append(('user', message))
+        if userId not in self.user_session_chat_messages:
+           self.user_session_chat_messages[userId] = {}
+        if userSessionId not in self.user_session_chat_messages[userId]:
+           self.user_session_chat_messages[userId][userSessionId] = []
+        self.user_session_chat_messages[userId][userSessionId].append(('You', message))
         with self.container:
             ui.label(f'You: {message}').classes('text-green-700 font-semibold')
         self._scroll_to_bottom()
         
 
-    def add_ai_message_chunk(self, token: str):
+    def add_ai_message_chunk(self, userId: str, userSessionId: str, token: str):
         """Add streaming AI message chunks (token by token)."""
-        # print(f"self.chat_messages: {self.chat_messages}\n")
+        # print(f"self.user_session_chat_messages: {self.user_session_chat_messages}\n")
         # First AI message
-        if not self.chat_messages or self.chat_messages[-1][0].lower() != 'ai':
-            self.chat_messages.append(('ai', token))
+        if not self.user_session_chat_messages[userId][userSessionId] or self.user_session_chat_messages[userId][userSessionId][-1][0].lower()!='ai':
+            self.user_session_chat_messages[userId][userSessionId].append(('AI', token))
             with self.container:
                 self.last_ai_label = ui.label(f'AI: {token}').classes('text-blue-600 font-semibold')
         else:
             # Append to last AI message with proper spacing
-            last_text = self.chat_messages[-1][1]
+            last_text = self.user_session_chat_messages[userId][userSessionId][-1][1]
             # Add a space if last char is not whitespace and token starts with alphanumeric
             if last_text and not last_text[-1].isspace() and len(token)>0 and token[0].isalnum():
                 token = " " + token
             # Update chat message history
-            self.chat_messages[-1] = ('ai', last_text + token)
+            self.user_session_chat_messages[userId][userSessionId][-1] = ('AI', last_text + token)
             # Update the UI label dynamically
             if hasattr(self, 'last_ai_label') and self.last_ai_label is not None:
-                self.last_ai_label.text = f'AI: {self.chat_messages[-1][1]}'
+                self.last_ai_label.text = f'AI: {self.user_session_chat_messages[userId][userSessionId][-1][1]}'
         self._scroll_to_bottom()
 
 
@@ -105,7 +109,7 @@ class ChatBox:
 
     def clear_chat(self):
         """Clear all chat messages and reset the UI."""
-        self.chat_messages = []
+        self.user_session_chat_messages = []
         if self.container:
             self.container.clear()
 
@@ -120,7 +124,7 @@ class ChatBox:
                 url = 'http://127.0.0.1:8000/api/v1/chat/ask'
                 async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "userSessionId":userSessionId}) as response:
                     if response.status_code!=200:
-                        self.add_ai_message_chunk(f"\nError occured {response.status_code}:{response.text}\n")
+                        self.add_ai_message_chunk(userId, userSessionId, f"\nError occured {response.status_code}:{response.text}\n")
                         return
                     async for line in response.aiter_lines():
                         if not line.startswith("data:"):
@@ -129,16 +133,17 @@ class ChatBox:
                         if not token:
                             continue
                         if token == "[STREAM_COMPLETED]":
-                            # self.add_ai_message_chunk("\n[Response Completed]\n")
+                            # self.add_ai_message_chunk(userId, userSessionId, "\n[Response Completed]\n")
+                            print(f"self.user_session_chat_messages[userId][userSessionId]: {self.user_session_chat_messages[userId][userSessionId]}\n")
                             break
                         try:
                             rsp = json.loads(token)
                             if isinstance(rsp, dict) and "status_code" in rsp:
                                 if rsp["status_code"]!=200:
                                     msg = " | ".join(rsp.get("messages", []))
-                                    self.add_ai_message_chunk(f"\n{msg}\n")
+                                    self.add_ai_message_chunk(userId, userSessionId, f"\n{msg}\n")
                                     break
                         except json.JSONDecodeError:
-                            self.add_ai_message_chunk(token)    
+                            self.add_ai_message_chunk(userId, userSessionId, token)    
             except Exception as e:
-                self.add_ai_message_chunk(f"\nsend_prompt_to_backend backend call failed: {str(e)}\n")
+                self.add_ai_message_chunk(userId, userSessionId, f"\nsend_prompt_to_backend backend call failed: {str(e)}\n")
