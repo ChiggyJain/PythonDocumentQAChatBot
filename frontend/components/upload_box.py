@@ -42,7 +42,7 @@ class UploadBox:
             if file_size > (5 * 1024 * 1024):
                 self.status_box.set_error("File too large! Maximum allowed size is 5 MB.")
                 return
-            self.status_box.set_status(f"Uploading {filename} ({file_size_mb:.2f} MB)...")
+            self.status_box.set_status(f"Uploading {filename} ({file_size_mb:.2f} MB).")
             # Send to backend as multipart/form-data
             url = "http://127.0.0.1:8000/api/v1/pdf/upload"
             async with httpx.AsyncClient(timeout=None) as client:
@@ -50,9 +50,10 @@ class UploadBox:
                 response = await client.post(url, files=files, data={"userId":self.userId, "userSessionId":self.userSessionId})
             if response.status_code == 200:
                 res = response.json()
-                self.status_box.set_status(f"{res['message']}")
+                self.status_box.set_status(f"{res['messages'][0]}")
             else:
-                self.status_box.set_error(f"on_upload failed to upload PDF: {response.text}")
+                res = response.json()
+                self.status_box.set_error(f"{res['messages'][0]}")
         except Exception as e:
             self.status_box.set_error(f"Error: {str(e)}")
         finally:

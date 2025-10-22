@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.responses import StreamingResponse, JSONResponse
 from typing import AsyncGenerator
+import json
 from backend.api.v1.schemas.chat_schema import *
 from backend.api.v1.agents.chatbot_agents import ChatBotAgent
 from backend.api.v1.utils.utils import *
@@ -26,11 +27,11 @@ async def generate_response_tokens(prompt: str, userId:str, userSessionId:str) -
     except Exception as e:
         error_rsp = standard_response(
             status_code=500,
-            messages=[f"[ERROR] generate_response_tokens AI Agent failed: {str(e)}"],
+            messages=[f"Error occured in generate_response_tokens func: {str(e)}"],
             data=None
         )
         # yield formatted JSON so frontend can handle it
-        yield f"data: {error_rsp}"
+        yield f"data: {json.dumps(error_rsp)}"
 
 
 
@@ -42,16 +43,23 @@ async def ask_chat(chat_request: ChatRequest):
     - userSessionId: Enter loggedIn user userSessionId
     - prompt: Enter prompt message/question
     """
-    # print(f"chat_request: {chat_request}\n")
-    userId = chat_request.userId
-    userSessionId = chat_request.userSessionId
-    prompt = chat_request.prompt
-    # Token generator function for StreamingResponse
-    async def event_stream():
-        async for token in generate_response_tokens(prompt=prompt, userId=userId, userSessionId=userSessionId):
-            # print(f"event_stream Token: {token}\n")
-            yield f"data: {token}\n\n"
-    return StreamingResponse(content=event_stream(), media_type="text/event-stream")
+    try:
+        # print(f"chat_request: {chat_request}\n")
+        userId = chat_request.userId
+        userSessionId = chat_request.userSessionId
+        prompt = chat_request.prompt
+        async def event_stream():
+            async for token in generate_response_tokens(prompt=prompt, userId=userId, userSessionId=userSessionId):
+                # print(f"event_stream Token: {token}\n")
+                yield f"data: {token}\n\n"
+        return StreamingResponse(content=event_stream(), media_type="text/event-stream")
+    except Exception as e:
+        error_rsp = standard_response(
+            status_code=500,
+            messages=[f"Error occured in ask_chat func: {str(e)}"],
+            data=None
+        )
+        return StreamingResponse(content=f"data: {json.dumps(error_rsp)}", media_type="text/event-stream")
 
 
 

@@ -129,16 +129,16 @@ class ChatBox:
                         if not token:
                             continue
                         if token == "[STREAM_COMPLETED]":
-                            self.add_ai_message_chunk("\n[Response Completed]\n")
+                            # self.add_ai_message_chunk("\n[Response Completed]\n")
                             break
                         try:
                             rsp = json.loads(token)
                             if isinstance(rsp, dict) and "status_code" in rsp:
                                 if rsp["status_code"]!=200:
                                     msg = " | ".join(rsp.get("messages", []))
-                                    self.add_ai_message_chunk(f"\[ERROR] {msg}\n")
+                                    self.add_ai_message_chunk(f"\n{msg}\n")
                                     break
                         except json.JSONDecodeError:
                             self.add_ai_message_chunk(token)    
             except Exception as e:
-                self.add_ai_message_chunk(f"\n[ERROR] send_prompt_to_backend backend call failed: {str(e)}\n")
+                self.add_ai_message_chunk(f"\nsend_prompt_to_backend backend call failed: {str(e)}\n")
