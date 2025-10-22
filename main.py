@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from backend.api.v1.core.mysql_db import MysqlDB
 from backend.api.v1.routes import system_routes
+from backend.api.v1.routes import login_routes
 from backend.api.v1.routes import chat_routes
 from backend.api.v1.routes import pdf_routes
 from backend.api.v1.utils.utils import *
@@ -38,6 +39,7 @@ app.add_middleware(
 
 
 # Include API Routes
+app.include_router(login_routes.router, prefix="/api/v1/login", tags=["Login"])
 app.include_router(system_routes.router, prefix="/api/v1/system", tags=["System"])
 app.include_router(chat_routes.router, prefix="/api/v1/chat", tags=["Chat"])
 app.include_router(pdf_routes.router, prefix="/api/v1/pdf", tags=["PDF"])
