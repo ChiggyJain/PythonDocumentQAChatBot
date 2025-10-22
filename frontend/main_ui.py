@@ -6,7 +6,7 @@ from components.status_box import StatusBox
 import asyncio
 
 ## user details after login simmulation
-userId = 11
+userId = "11"
 userSessionId = "111"
 
 # initialize shared components

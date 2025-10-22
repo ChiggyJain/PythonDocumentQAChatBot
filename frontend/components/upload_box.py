@@ -43,8 +43,8 @@ class UploadBox:
                 self.status_box.set_error("File too large! Maximum allowed size is 5 MB.")
                 return
             self.status_box.set_status(f"Uploading {filename} ({file_size_mb:.2f} MB)...")
-            url = "http://127.0.0.1:8000/api/v1/pdf/upload"
             # Send to backend as multipart/form-data
+            url = "http://127.0.0.1:8000/api/v1/pdf/upload"
             async with httpx.AsyncClient(timeout=None) as client:
                 files = {'file': (filename, file_bytes, 'application/pdf')}
                 response = await client.post(url, files=files, data={"userId":self.userId, "userSessionId":self.userSessionId})

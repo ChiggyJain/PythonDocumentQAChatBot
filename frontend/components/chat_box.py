@@ -1,7 +1,9 @@
 
 import httpx
 import asyncio
+import json
 from nicegui import ui
+
 
 
 class ChatBox:
@@ -39,6 +41,7 @@ class ChatBox:
         if not message:
             return
         self.input_box.value = ""
+        self.add_user_message(message)
         await self.send_prompt_to_backend(message, self.userId, self.userSessionId)
         
 
@@ -61,7 +64,7 @@ class ChatBox:
 
 
     def add_user_message(self, message: str):
-        """Add a user message to the chat."""
+        """Add a user message to the chatbox container."""
         self.chat_messages.append(('user', message))
         with self.container:
             ui.label(f'You: {message}').classes('text-green-700 font-semibold')
@@ -112,19 +115,31 @@ class ChatBox:
         Sends prompt to FastAPI backend streaming endpoint
         and updates chat container token by token.
         """
-        self.add_user_message(prompt) # show user message
-        url = 'http://127.0.0.1:8000/api/v1/chat/ask'
         async with httpx.AsyncClient(timeout=None) as client:
             try:
-                # POST request with JSON payload
+                url = 'http://127.0.0.1:8000/api/v1/chat/ask'
                 async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "userSessionId":userSessionId}) as response:
-                    if response.status_code != 200:
-                        self.add_ai_message_chunk(f"[ERROR] {response.text}")
+                    if response.status_code!=200:
+                        self.add_ai_message_chunk(f"[ERROR] HTTP {response.status_code}: {response.text}")
                         return
                     # Stream tokens from backend
                     async for line in response.aiter_lines():
-                        if line.startswith("data:"):
-                            token = line.replace("data:", "").strip()
-                            self.add_ai_message_chunk(token)
+                        if not line.startswith("data:"):
+                            continue
+                        token = line.replace("data:", "").strip()
+                        if not token:
+                            continue
+                        if token == "[STREAM_COMPLETED]":
+                            self.add_ai_message_chunk("\n[Response Completed]\n")
+                            break
+                        try:
+                            rsp = json.loads(token)
+                            if isinstance(rsp, dict) and "status_code" in rsp:
+                                if rsp["status_code"] != 200:
+                                    msg = " | ".join(rsp.get("messages", []))
+                                    self.add_ai_message_chunk(f"[ERROR] {msg}")
+                                    break
+                        except json.JSONDecodeError:
+                            self.add_ai_message_chunk(token)    
             except Exception as e:
                 self.add_ai_message_chunk(f"[ERROR] send_prompt_to_backend backend call failed: {str(e)}")

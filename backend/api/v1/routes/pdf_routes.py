@@ -9,7 +9,7 @@ from backend.api.v1.agents.chatbot_agents import ChatBotAgent
 
 router = APIRouter()
 chatBotAgentManager = ChatBotAgent()
-print(f"pdf-routes-chatBotAgentManager-id: {id(chatBotAgentManager)}\n")
+# print(f"pdf-routes-chatBotAgentManager-id: {id(chatBotAgentManager)}\n")
 
 # Folder where PDFs will be stored
 CURRENT_FILE = os.path.abspath(__file__)
@@ -54,7 +54,7 @@ async def upload_pdf(file: UploadFile = File(...), userId:str=Form(...), userSes
         agentInstancesDict = chatBotAgentManager.get_or_create_agent(userId, userSessionId)
         agentInstancesDict['all_pdf_text'].append(parsed_file_result_dict['overallPdfSummary'])
         agentInstancesDict['overall_pdf_text']+= "\n" + parsed_file_result_dict['overallPdfSummary']['content']
-        print(f"agentInstancesDict: {agentInstancesDict}")
+        # print(f"agentInstancesDict: {agentInstancesDict}")
         # returning response
         return JSONResponse(
             status_code=200,
