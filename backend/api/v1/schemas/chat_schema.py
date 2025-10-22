@@ -2,8 +2,9 @@
 from pydantic import BaseModel, Field
 
 class ChatRequest(BaseModel):
-    prompt: str = Field(..., description="User question or message")
-    session_id: str | None = Field(None, description="Optional session ID for conversation history")
+    prompt: str = Field(..., description="User Question or Message")
+    userId: str = Field(..., description="LoggedIn User-ID")
+    userSessionId: str = Field(..., description="LoggedIn User Chat-Session-ID")
 
 class ChatResponse(BaseModel):
     message: str = Field(..., description="AI response message chunk")

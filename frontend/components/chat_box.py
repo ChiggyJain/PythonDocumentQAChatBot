@@ -107,7 +107,7 @@ class ChatBox:
             self.container.clear()
 
 
-    async def send_prompt_to_backend(self, prompt: str, userId:str,  userSessionId:str):
+    async def send_prompt_to_backend(self, prompt:str, userId:str,  userSessionId:str):
         """
         Sends prompt to FastAPI backend streaming endpoint
         and updates chat container token by token.
@@ -117,7 +117,7 @@ class ChatBox:
         async with httpx.AsyncClient(timeout=None) as client:
             try:
                 # POST request with JSON payload
-                async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "session_id": userSessionId}) as response:
+                async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "userSessionId":userSessionId}) as response:
                     if response.status_code != 200:
                         self.add_ai_message_chunk(f"[ERROR] {response.text}")
                         return
