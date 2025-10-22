@@ -7,7 +7,9 @@ class UploadBox:
 
 
     # constructor
-    def __init__(self, status_box, chat_box):
+    def __init__(self, userId, userSessionId, status_box, chat_box):
+        self.userId = userId
+        self.userSessionId = userSessionId
         self.status_box = status_box
         self.chat_box = chat_box
 
@@ -45,7 +47,7 @@ class UploadBox:
             # Send to backend as multipart/form-data
             async with httpx.AsyncClient(timeout=None) as client:
                 files = {'file': (filename, file_bytes, 'application/pdf')}
-                response = await client.post(url, files=files)
+                response = await client.post(url, files=files, data={"userId":self.userId, "userSessionId":self.userSessionId})
             if response.status_code == 200:
                 res = response.json()
                 self.status_box.set_status(f"{res['message']}")

@@ -7,8 +7,8 @@ from backend.api.v1.agents.chatbot_agents import ChatBotAgent
 from typing import AsyncGenerator
 
 router = APIRouter()
-chat_agent = ChatBotAgent()
-print(f"chat_agent-instances-id: {id(chat_agent)}\n")
+chatBotAgentManager = ChatBotAgent()
+print(f"chat-routes-chatBotAgentManager-instances-id: {id(chatBotAgentManager)}\n")
 
 
 
@@ -21,7 +21,7 @@ async def generate_response_tokens(prompt: str, userId:str, userSessionId:str) -
     """
 
     try:
-        async for token in chat_agent.get_response(prompt=prompt, userId=userId, userSessionId=userSessionId):
+        async for token in chatBotAgentManager.get_response(prompt=prompt, userId=userId, userSessionId=userSessionId):
             yield token
     except Exception as e:
         yield f"[ERROR] generate_response_tokens AI Agent failed: {str(e)}"
@@ -68,7 +68,7 @@ async def get_chat_history(session_id: str):
     """
 
     try:
-        history = chat_agent.get_history(session_id)
+        history = chatBotAgentManager.get_history(session_id)
         response_list = [ChatResponse(message=msg, done=True) for msg in history]
         return response_list
     except Exception as e:

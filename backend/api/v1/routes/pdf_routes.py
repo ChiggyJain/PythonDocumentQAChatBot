@@ -1,17 +1,15 @@
 
 import os
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from pathlib import Path
 from backend.api.v1.services.pdf_parser_service import parse_pdf
 from backend.api.v1.agents.chatbot_agents import ChatBotAgent
 
-# Router initialization
 router = APIRouter()
-
-### agent instannce
-agent_instance = ChatBotAgent()
+chatBotAgentManager = ChatBotAgent()
+print(f"pdf-routes-chatBotAgentManager-id: {id(chatBotAgentManager)}\n")
 
 # Folder where PDFs will be stored
 CURRENT_FILE = os.path.abspath(__file__)
@@ -23,7 +21,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 
 @router.post("/upload", summary="Upload PDF file")
-async def upload_pdf(file: UploadFile = File(...)):
+async def upload_pdf(file: UploadFile = File(...), userId:str=Form(...), userSessionId:str=Form(...)):
     """
     Upload a single PDF file and save it in the data directory.
     """
@@ -52,7 +50,11 @@ async def upload_pdf(file: UploadFile = File(...)):
         # print(f"parsed_file_result_dict: {parsed_file_result_dict}\n")
         if len(parsed_file_result_dict['allPagesDetails'])<=0:
             raise HTTPException(status_code=400, detail="PDF contains no readable text.")
-        
+        # adding knowledge to agent
+        agentInstancesDict = chatBotAgentManager.get_or_create_agent(userId, userSessionId)
+        agentInstancesDict['all_pdf_text'].append(parsed_file_result_dict['overallPdfSummary'])
+        agentInstancesDict['overall_pdf_text']+= "\n" + parsed_file_result_dict['overallPdfSummary']['content']
+        print(f"agentInstancesDict: {agentInstancesDict}")
         # returning response
         return JSONResponse(
             status_code=200,
