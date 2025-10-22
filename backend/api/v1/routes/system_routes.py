@@ -16,7 +16,7 @@ async def check_system_health():
         status_code=200,
         content=standard_response(
             status_code=200,
-            messages=[f"DocumentQAChatBot Backend System is Up & Running"],
+            messages=[f"Document-QA-ChatBot Backend System is Up & Running"],
             data={}
         ) 
     )
