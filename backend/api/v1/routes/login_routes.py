@@ -18,9 +18,10 @@ async def authenticate_login_user(loginUserRequestFormData: LoginRequest):
         If login failed then return error messages.
         - **username**: Enter your account username
         - **password**: Enter your account password
-        - Demo Credentials: 
+        - Use anyone Login Demo Credentials: 
             1) Username: admin1, Password: admin1
             2) Username: admin2, Password: admin2
+            3) Username: admin3, Password: admin3
     """
     loginRspObj = standard_response(status_code=401, messages=["Invalid username or password."], data={})
     try:
