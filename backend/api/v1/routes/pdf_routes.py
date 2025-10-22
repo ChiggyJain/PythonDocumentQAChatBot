@@ -45,7 +45,7 @@ async def upload_pdf(uploading_file_request:UploadPdfFileRequest=Depends(UploadP
             return JSONResponse(
                 status_code=400,
                 content=standard_response(
-                    status_code=400, messages=[f"Only PDF files are allowed"], data=None
+                    status_code=400, messages=[f"Only PDF files are allowed"], data={}
                 )
             )
         # checking file-size
@@ -53,7 +53,7 @@ async def upload_pdf(uploading_file_request:UploadPdfFileRequest=Depends(UploadP
             return JSONResponse(
                 status_code=400,
                 content=standard_response(
-                    status_code=400, messages=[f"File too large! Max 5 MB allowed."], data=None
+                    status_code=400, messages=[f"File too large! Max 5 MB allowed."], data={}
                 )
             )
         # Write PDF file to disk
@@ -67,7 +67,7 @@ async def upload_pdf(uploading_file_request:UploadPdfFileRequest=Depends(UploadP
             return JSONResponse(
                 status_code=400,
                 content=standard_response(
-                    status_code=400, messages=[f"Uploaded pdf file contains no readable text."], data=None
+                    status_code=400, messages=[f"Uploaded pdf file contains no readable text."], data={}
                 )
             )
         # adding knowledge to agent
@@ -88,6 +88,6 @@ async def upload_pdf(uploading_file_request:UploadPdfFileRequest=Depends(UploadP
         return JSONResponse(
             status_code=500,
             content=standard_response(
-                status_code=500, messages=[f"Error occured while uploading pdf file: {str(e)}"], data=None
+                status_code=500, messages=[f"Error occured while uploading pdf file: {str(e)}"], data={}
             )
         )

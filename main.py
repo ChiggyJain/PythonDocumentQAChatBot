@@ -8,9 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 load_dotenv()
+from fastapi.responses import JSONResponse
 from backend.api.v1.core.mysql_db import MysqlDB
 from backend.api.v1.routes import chat_routes
 from backend.api.v1.routes import pdf_routes
+from backend.api.v1.utils.utils import *
 
 # initialize the app
 app = FastAPI(
@@ -68,13 +70,19 @@ async def shutdown_event():
 
 
 # system-health endpoint
-@app.get("/system-health", summary="System Health")
+@app.get("/system-health", summary="Checking Backend System Health")
 async def root():
     """
         This api is used for checking backend system health
     """
-    return {"message": "DocumentQAChatBot Backend is Running"}
-
+    return JSONResponse(
+        status_code=200,
+        content=standard_response(
+            status_code=200,
+            messages=[f"DocumentQAChatBot Backend System is Up & Running"],
+            data={}
+        ) 
+    )
 
 # main server runner
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 
 
-from fastapi import APIRouter, Request, HTTPException, status
+from fastapi import APIRouter, Request, HTTPException, status, Depends
 from fastapi.responses import StreamingResponse, JSONResponse
 from typing import AsyncGenerator
 import json
@@ -28,7 +28,7 @@ async def generate_response_tokens(prompt: str, userId:str, userSessionId:str) -
         error_rsp = standard_response(
             status_code=500,
             messages=[f"Error occured in generate_response_tokens func: {str(e)}"],
-            data=None
+            data={}
         )
         # yield formatted JSON so frontend can handle it
         yield f"data: {json.dumps(error_rsp)}"
@@ -57,21 +57,52 @@ async def ask_chat(chat_request: ChatRequest):
         error_rsp = standard_response(
             status_code=500,
             messages=[f"Error occured in ask_chat func: {str(e)}"],
-            data=None
+            data={}
         )
         return StreamingResponse(content=f"data: {json.dumps(error_rsp)}", media_type="text/event-stream")
 
 
 
-@router.get("/history/{session_id}", response_model=list[ChatHistoryResponse], summary="Chat History Details for Respective User-ID and User-Session-ID")
-async def get_chat_history(session_id: str):
+@router.get("/chat_history/", summary="Chat History Details for Respective User-ID and User-Session-ID")
+async def get_chat_history(chat_history_request:ChatHistoryRequest = Depends()):
     """
-    Retrieve full chat session history for a given session_id
+    Retrieve full chat history messages
+    - userId: Enter loggedIn user userId
+    - userSessionId: Enter loggedIn user userSessionId
     """
+    chatHistoryRspObj = standard_response(status_code=400, messages=["No chat history found"], data={})
     try:
-        history = chatBotAgentManager.get_history(session_id)
-        response_list = [ChatHistoryResponse(message=msg, done=True) for msg in history]
-        return response_list
+        # print(f"chat_history_request: {chat_history_request}\n")
+        userId = chat_history_request.userId
+        userSessionId = chat_history_request.userSessionId
+        chatHistoryRspObj = chatBotAgentManager.get_history(userId, userSessionId)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve chat history: {str(e)}")
+        chatHistoryRspObj['status_code'] = 500
+        chatHistoryRspObj['messages'] = [f"Error occured while retrieving chat history: {str(e)}"]
+    return JSONResponse(
+        status_code=chatHistoryRspObj['status_code'],
+        content=chatHistoryRspObj
+    )
+
+
+@router.post("/reset_chat_history/", summary="Reset Chat History Details for Respective User-ID and User-Session-ID")
+async def reset_chat_history(chat_history_reset_request:ChatHistoryResetRequest):
+    """
+    Reset chat history messages
+    - userId: Enter loggedIn user userId
+    - userSessionId: Enter loggedIn user userSessionId
+    """
+    resetChatHistoryRspObj = standard_response(status_code=400, messages=["Chat history is not reset"], data={})
+    try:
+        # print(f"chat_history_request: {chat_history_request}\n")
+        userId = chat_history_reset_request.userId
+        userSessionId = chat_history_reset_request.userSessionId
+        resetChatHistoryRspObj = chatBotAgentManager.reset_chat_history(userId, userSessionId)
+    except Exception as e:
+        resetChatHistoryRspObj['status_code'] = 500
+        resetChatHistoryRspObj['messages'] = [f"Error occured while reset chat history: {str(e)}"]
+    return JSONResponse(
+        status_code=resetChatHistoryRspObj['status_code'],
+        content=resetChatHistoryRspObj
+    )
 

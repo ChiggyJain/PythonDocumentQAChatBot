@@ -6,6 +6,11 @@ class ChatRequest(BaseModel):
     userSessionId: str = Field(..., description="LoggedIn User Chat-Session-ID")
     prompt: str = Field(..., description="User Question or Message")
 
-class ChatHistoryResponse(BaseModel):
-    message: str = Field(..., description="AI response message chunk")
-    done: bool = Field(False, description="Whether the full response is completed")
+
+class ChatHistoryRequest(BaseModel):
+    userId: str = Field(..., description="LoggedIn User-ID")
+    userSessionId: str = Field(..., description="LoggedIn User Chat-Session-ID")
+
+class ChatHistoryResetRequest(BaseModel):
+    userId: str = Field(..., description="LoggedIn User-ID")
+    userSessionId: str = Field(..., description="LoggedIn User Chat-Session-ID")

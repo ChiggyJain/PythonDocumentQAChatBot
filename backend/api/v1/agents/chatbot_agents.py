@@ -1,12 +1,13 @@
 
+from dotenv import load_dotenv
+load_dotenv()
+import os
 import threading
 from agno.memory import MemoryManager
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from typing import AsyncGenerator
-from dotenv import load_dotenv
-load_dotenv()
-import os
+from backend.api.v1.utils.utils import *
 
 
 class ChatBotAgent:
@@ -69,24 +70,50 @@ class ChatBotAgent:
                     if last_msg.startswith("AI:"):
                         agentInstancesDict['messages'][-1]+= response_token.content
                     else:
-                        agentInstancesDict['messages'].append(f"AI:{response_token.content}")
+                        agentInstancesDict['messages'].append(f"AI: {response_token.content}")
         except Exception as e:
             yield f"[ERROR] get_response Agent failed: {str(e)}"
 
 
     def get_history(self, userId:str, userSessionId:str) -> list[str]:
+        """
+        Retrieve full chat history messages
+        - userId: Enter loggedIn user userId
+        - userSessionId: Enter loggedIn user userSessionId
+        """
+        rspDataObj = standard_response(status_code=400, messages=["No chat history found"], data={})
+        try:
+            agentInstancesDict = self.get_or_create_agent(userId, userSessionId)
+            if len(agentInstancesDict['messages'])>0:
+                rspDataObj['status_code'] = 200
+                rspDataObj['messages'] = [f"Chat history is retreived successfully"]
+                rspDataObj['data'] = {
+                    "userId" : userId,
+                    "userSessionId" : userSessionId,
+                    "messages" : agentInstancesDict['messages']
+                }
+        except Exception as e:
+            rspDataObj['status_code'] = 500
+            rspDataObj['messages'] = [f"Error occured while retrieving chat history: {str(e)}"]
+        return rspDataObj
         
-        """
-        Return full chat history for a session.
-        """
 
-        pass
-
-    def reset_session(self, userId:str, userSessionId:str):
-
+    def reset_chat_history(self, userId:str, userSessionId:str) -> list[str]:
         """
-        Clear session history.
+        Reset chat history messages
+        - userId: Enter loggedIn user userId
+        - userSessionId: Enter loggedIn user userSessionId
         """
-
-        pass
+        rspDataObj = standard_response(status_code=400, messages=["No chat history found for reset"], data={})
+        try:
+            agentInstancesDict = self.get_or_create_agent(userId, userSessionId)
+            if len(agentInstancesDict['messages'])>0:
+                agentInstancesDict['messages'] = []
+                rspDataObj['status_code'] = 200
+                rspDataObj['messages'] = [f"Chat history is reset successfully"]
+                rspDataObj['data'] = {}
+        except Exception as e:
+            rspDataObj['status_code'] = 500
+            rspDataObj['messages'] = [f"Error occured while reset chat history: {str(e)}"]
+        return rspDataObj
         

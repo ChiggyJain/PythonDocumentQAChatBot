@@ -120,7 +120,7 @@ class ChatBox:
                 url = 'http://127.0.0.1:8000/api/v1/chat/ask'
                 async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "userSessionId":userSessionId}) as response:
                     if response.status_code!=200:
-                        self.add_ai_message_chunk(f"\n[ERROR] HTTP {response.status_code}:{response.text}\n")
+                        self.add_ai_message_chunk(f"\nError occured {response.status_code}:{response.text}\n")
                         return
                     async for line in response.aiter_lines():
                         if not line.startswith("data:"):
