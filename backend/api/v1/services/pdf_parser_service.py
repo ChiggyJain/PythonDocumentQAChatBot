@@ -15,7 +15,7 @@ def parse_pdf(file_path: Path) -> Dict[str, Any]:
     Raises:
         ValueError: If PDF is empty or cannot be read.
     """
-    print(f"parse_pdf file_path: {file_path}\n")
+    # print(f"parse_pdf file_path: {file_path}\n")
     if not file_path.exists():
         raise ValueError(f"File does not exist: {file_path}") 
     totalPageCount = 0
