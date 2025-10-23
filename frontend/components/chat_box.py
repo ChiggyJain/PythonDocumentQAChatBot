@@ -139,7 +139,7 @@ class ChatBox:
                             continue
                         if token == "[STREAM_COMPLETED]":
                             # self.add_ai_message_chunk(userId, userSessionId, "\n[Response Completed]\n")
-                            print(f"self.user_session_chat_messages[userId][userSessionId]: {self.user_session_chat_messages[userId][userSessionId]}\n")
+                            # print(f"self.user_session_chat_messages[userId][userSessionId]: {self.user_session_chat_messages[userId][userSessionId]}\n")
                             break
                         try:
                             rsp = json.loads(token)
