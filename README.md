@@ -69,8 +69,8 @@
 - Python 3.12
 - Docker & Docker Compose (for containerized setup)
 
-Steps to Follows to execute project into the local machine
-1. make this [PythonProject] directory from terminal
+### Steps to Follows to execute project into the local machine:
+1. Make this [PythonProject] directory from terminal
 2. Goto this directory [PythonProject] from terminal
 3. Execute this command: git clone https://github.com/ChiggyJain/PythonDocumentQAChatBot.git
 4. Goto this directory [PythonDocumentQAChatBot] from terminal
