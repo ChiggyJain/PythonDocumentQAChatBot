@@ -48,6 +48,14 @@ async def upload_pdf(uploading_file_request:UploadPdfFileRequest=Depends(UploadP
                     status_code=400, messages=[f"Only PDF files are allowed"], data={}
                 )
             )
+        # checking empty
+        if file_size<=0:
+            return JSONResponse(
+                status_code=400,
+                content=standard_response(
+                    status_code=400, messages=[f"uploaded pdf file is empty."], data={}
+                )
+            )
         # checking file-size
         if file_size > MAX_FILE_SIZE:
             return JSONResponse(

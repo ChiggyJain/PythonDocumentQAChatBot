@@ -75,18 +75,18 @@ class ChatBotAgent:
             yield f"[ERROR] get_response Agent failed: {str(e)}"
 
 
-    def get_history(self, userId:str, userSessionId:str) -> list[str]:
+    def get_chat_session_history(self, userId:str, userSessionId:str) -> list[str]:
         """
-        Retrieve full chat history messages
+        Retrieve chat session history messages
         - userId: Enter loggedIn user userId
         - userSessionId: Enter loggedIn user userSessionId
         """
-        rspDataObj = standard_response(status_code=400, messages=["No chat history found"], data={})
+        rspDataObj = standard_response(status_code=400, messages=["No chat session history found"], data={})
         try:
             agentInstancesDict = self.get_or_create_agent(userId, userSessionId)
             if len(agentInstancesDict['messages'])>0:
                 rspDataObj['status_code'] = 200
-                rspDataObj['messages'] = [f"Chat history is retreived successfully"]
+                rspDataObj['messages'] = [f"Chat session history is retreived successfully"]
                 rspDataObj['data'] = {
                     "userId" : userId,
                     "userSessionId" : userSessionId,
@@ -94,26 +94,26 @@ class ChatBotAgent:
                 }
         except Exception as e:
             rspDataObj['status_code'] = 500
-            rspDataObj['messages'] = [f"Error occured while retrieving chat history: {str(e)}"]
+            rspDataObj['messages'] = [f"Error occured while retrieving chat session history: {str(e)}"]
         return rspDataObj
         
 
-    def reset_chat_history(self, userId:str, userSessionId:str) -> list[str]:
+    def reset_chat_session_history(self, userId:str, userSessionId:str) -> list[str]:
         """
-        Reset chat history messages
+        Reset chat session history messages
         - userId: Enter loggedIn user userId
         - userSessionId: Enter loggedIn user userSessionId
         """
-        rspDataObj = standard_response(status_code=400, messages=["No chat history found for reset"], data={})
+        rspDataObj = standard_response(status_code=400, messages=["No chat session history found for reset"], data={})
         try:
             agentInstancesDict = self.get_or_create_agent(userId, userSessionId)
             if len(agentInstancesDict['messages'])>0:
                 agentInstancesDict['messages'] = []
                 rspDataObj['status_code'] = 200
-                rspDataObj['messages'] = [f"Chat history is reset successfully"]
+                rspDataObj['messages'] = [f"Chat session history is reset successfully"]
                 rspDataObj['data'] = {}
         except Exception as e:
             rspDataObj['status_code'] = 500
-            rspDataObj['messages'] = [f"Error occured while reset chat history: {str(e)}"]
+            rspDataObj['messages'] = [f"Error occured while reset chat session history: {str(e)}"]
         return rspDataObj
         

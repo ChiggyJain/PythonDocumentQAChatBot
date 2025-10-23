@@ -9,7 +9,6 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from backend.api.v1.core.mysql_db import MysqlDB
 from backend.api.v1.routes import system_routes
 from backend.api.v1.routes import login_routes
 from backend.api.v1.routes import chat_routes
@@ -46,35 +45,15 @@ app.include_router(pdf_routes.router, prefix="/api/v1/pdf", tags=["PDF"])
 
 
 # app startup events
-# database open connections
 @app.on_event("startup")
 async def startup_event():
-    print(f"Application startup: connecting to MySQL database...\n")
-    RETRY_INTERVAL = 3
-    MAX_RETRIES = 20
-    retries = 0
-    while retries < MAX_RETRIES:
-        try:
-            await MysqlDB.connect()
-            print("Application startup: connected to MySQL database...\n")
-            break
-        except Exception as e:
-            retries+= 1
-            print(f"Waiting for MySQL... attempt {retries}/{MAX_RETRIES}, error: {e}\n")
-            await asyncio.sleep(RETRY_INTERVAL)
-    else:
-        raise RuntimeError("Could not connect to MySQL after multiple attempts")
+    print(f"Application startup...\n")
+    
     
 # app shutdown events
-# database close connections
 @app.on_event("shutdown")
 async def shutdown_event():
-    print(f"Application shutdown: disconnecting from MySQL database...\n")
-    await MysqlDB.disconnect()
-    print(f"Application shutdown: disconnected from MySQL database...\n")
-
-
-
+    print(f"Application shutdown...\n")
 
 
 # main server runner
@@ -83,5 +62,5 @@ if __name__ == "__main__":
         "main:app",
         host=os.getenv("BACKEND_HOST", "0.0.0.0"),
         port=int(os.getenv("BACKEND_PORT", 8000)),
-        reload=True  # Turn off in production
+        reload=True
     )

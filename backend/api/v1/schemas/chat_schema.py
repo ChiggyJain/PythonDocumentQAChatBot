@@ -7,10 +7,10 @@ class ChatRequest(BaseModel):
     prompt: str = Field(..., description="User Question or Message")
 
 
-class ChatHistoryRequest(BaseModel):
+class ChatSessionHistoryRequest(BaseModel):
     userId: str = Field(..., description="LoggedIn User-ID")
     userSessionId: str = Field(..., description="LoggedIn User Chat-Session-ID")
 
-class ChatHistoryResetRequest(BaseModel):
+class ChatSessionHistoryResetRequest(BaseModel):
     userId: str = Field(..., description="LoggedIn User-ID")
     userSessionId: str = Field(..., description="LoggedIn User Chat-Session-ID")

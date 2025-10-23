@@ -63,44 +63,44 @@ async def ask_chat(chat_request: ChatRequest):
 
 
 
-@router.get("/chat_history/", summary="Chat History Details for Respective User-ID and User-Session-ID")
-async def get_chat_history(chat_history_request:ChatHistoryRequest = Depends()):
+@router.get("/chat_session_history/", summary="Chat Session History Details for Respective User-ID and User-Session-ID")
+async def get_chat_session_history(chat_session_history_request:ChatSessionHistoryRequest = Depends()):
     """
-    Retrieve full chat history messages
+    Retrieve chat session history messages
     - userId: Enter loggedIn user userId
     - userSessionId: Enter loggedIn user userSessionId
     """
-    chatHistoryRspObj = standard_response(status_code=400, messages=["No chat history found"], data={})
+    chatSessionHistoryRspObj = standard_response(status_code=400, messages=["No chat session history found"], data={})
     try:
         # print(f"chat_history_request: {chat_history_request}\n")
-        userId = chat_history_request.userId
-        userSessionId = chat_history_request.userSessionId
-        chatHistoryRspObj = chatBotAgentManager.get_history(userId, userSessionId)
+        userId = chat_session_history_request.userId
+        userSessionId = chat_session_history_request.userSessionId
+        chatSessionHistoryRspObj = chatBotAgentManager.get_chat_session_history(userId, userSessionId)
     except Exception as e:
-        chatHistoryRspObj['status_code'] = 500
-        chatHistoryRspObj['messages'] = [f"Error occured while retrieving chat history: {str(e)}"]
+        chatSessionHistoryRspObj['status_code'] = 500
+        chatSessionHistoryRspObj['messages'] = [f"Error occured while retrieving chat session history: {str(e)}"]
     return JSONResponse(
-        status_code=chatHistoryRspObj['status_code'],
-        content=chatHistoryRspObj
+        status_code=chatSessionHistoryRspObj['status_code'],
+        content=chatSessionHistoryRspObj
     )
 
 
-@router.post("/reset_chat_history/", summary="Reset Chat History Details for Respective User-ID and User-Session-ID")
-async def reset_chat_history(chat_history_reset_request:ChatHistoryResetRequest):
+@router.post("/reset_chat_session_history/", summary="Reset Chat Session History Details for Respective User-ID and User-Session-ID")
+async def reset_chat_session_history(chat_session_history_reset_request:ChatSessionHistoryResetRequest):
     """
-    Reset chat history messages
+    Reset chat session history messages
     - userId: Enter loggedIn user userId
     - userSessionId: Enter loggedIn user userSessionId
     """
-    resetChatHistoryRspObj = standard_response(status_code=400, messages=["Chat history is not reset"], data={})
+    resetChatHistoryRspObj = standard_response(status_code=400, messages=["Chat session history is not reset"], data={})
     try:
         # print(f"chat_history_request: {chat_history_request}\n")
-        userId = chat_history_reset_request.userId
-        userSessionId = chat_history_reset_request.userSessionId
-        resetChatHistoryRspObj = chatBotAgentManager.reset_chat_history(userId, userSessionId)
+        userId = chat_session_history_reset_request.userId
+        userSessionId = chat_session_history_reset_request.userSessionId
+        resetChatHistoryRspObj = chatBotAgentManager.reset_chat_session_history(userId, userSessionId)
     except Exception as e:
         resetChatHistoryRspObj['status_code'] = 500
-        resetChatHistoryRspObj['messages'] = [f"Error occured while reset chat history: {str(e)}"]
+        resetChatHistoryRspObj['messages'] = [f"Error occured while reset chat session history: {str(e)}"]
     return JSONResponse(
         status_code=resetChatHistoryRspObj['status_code'],
         content=resetChatHistoryRspObj
