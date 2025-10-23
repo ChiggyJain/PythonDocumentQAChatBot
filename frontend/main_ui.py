@@ -1,5 +1,8 @@
 
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
 import httpx, asyncio
 import uuid
 from nicegui import ui
@@ -28,6 +31,8 @@ def show_login_page(container):
                     async with httpx.AsyncClient() as client:
                         try:
                             url = 'http://127.0.0.1:8000/api/v1/login/authenticate_login_user/'
+                            if os.getenv("APP_ENV")!="development":
+                                url = 'http://backend:8000/api/v1/login/authenticate_login_user/'
                             resp = await client.post(url, json={
                                 "username": username_input.value,
                                 "password": password_input.value

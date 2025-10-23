@@ -1,4 +1,7 @@
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
 import httpx
 import asyncio
 import json
@@ -122,6 +125,8 @@ class ChatBox:
         async with httpx.AsyncClient(timeout=None) as client:
             try:
                 url = 'http://127.0.0.1:8000/api/v1/chat/ask'
+                if os.getenv("APP_ENV")!="development":
+                   url = 'http://backend:8000/api/v1/chat/ask' 
                 async with client.stream("POST", url, json={"prompt": prompt, "userId": userId, "userSessionId":userSessionId}) as response:
                     if response.status_code!=200:
                         self.add_ai_message_chunk(userId, userSessionId, f"\nError occured {response.status_code}:{response.text}\n")

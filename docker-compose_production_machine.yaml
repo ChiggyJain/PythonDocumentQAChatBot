@@ -1,21 +1,30 @@
 
-#version: "3.9"
-
 services:
 
-  app:
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile_production_machine
-    container_name: document_qa_chatbot_system_app_container
-    restart: always
+      dockerfile: Dockerfile_backend_production_machine
+    container_name: documentqa_backend_container
+    env_file: .env
     ports:
       - "8000:8000"
-    env_file:
-      .env
-    environment:
-      - TZ=Asia/Kolkata   
-    volumes:
-      - .:/app
-    command: >
-      sh -c "uvicorn main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - docqa_network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile_frontend_production_machine
+    container_name: documentqa_frontend_container
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    networks:
+      - docqa_network
+
+networks:
+  docqa_network:
+    driver: bridge

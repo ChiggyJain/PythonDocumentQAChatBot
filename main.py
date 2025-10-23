@@ -18,15 +18,17 @@ from backend.api.v1.utils.utils import *
 
 # initialize the app
 app = FastAPI(
-    title="DocumentQAChatBot APIs",
+    title="Document-QA-ChatBot-System-APIs",
     description="Backend APIs for document-based QA chatbot system",    
     version="1.0.0",
 )
 
 # Configure CORS (for frontend UI)
 origins = [
-    os.getenv("FRONTEND_URL", "http://127.0.0.1:8080"),
-    "http://localhost:8080"
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
+    "http://frontend:8080",
+    "http://frontend:8080"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -54,13 +56,3 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     print(f"Application shutdown...\n")
-
-
-# main server runner
-if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host=os.getenv("BACKEND_HOST", "0.0.0.0"),
-        port=int(os.getenv("BACKEND_PORT", 8000)),
-        reload=True
-    )

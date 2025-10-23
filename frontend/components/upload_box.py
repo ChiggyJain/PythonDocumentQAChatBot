@@ -1,4 +1,7 @@
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
 from nicegui import ui
 import httpx
 import asyncio
@@ -45,6 +48,8 @@ class UploadBox:
             self.status_box.set_status(f"Uploading {filename} ({file_size_mb:.2f} MB).")
             # Send to backend as multipart/form-data
             url = "http://127.0.0.1:8000/api/v1/pdf/upload"
+            if os.getenv("APP_ENV")!="development":
+                url = 'http://backend:8000/api/v1/pdf/upload'
             async with httpx.AsyncClient(timeout=None) as client:
                 files = {'file': (filename, file_bytes, 'application/pdf')}
                 response = await client.post(url, files=files, data={"userId":self.userId, "userSessionId":self.userSessionId})
