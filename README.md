@@ -35,7 +35,7 @@
 
 ## **Project Structure**
 
-PythonDocumentQAChatBot/
+```PythonDocumentQAChatBot/
 │
 ├── backend/
 │ ├── api/
@@ -58,7 +58,7 @@ PythonDocumentQAChatBot/
 ├── Dockerfile_frontent_production_machine
 ├── docker-compose_production_machine.yaml
 └── .env.example # Environment sample variables
-
+```
 
 
 ---
