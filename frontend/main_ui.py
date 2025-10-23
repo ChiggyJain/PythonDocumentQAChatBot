@@ -53,18 +53,16 @@ def show_login_page(container):
 
 
 
-
+# showing dashboard page
 def show_dashboard_page(container):
     import uuid
     from components.chat_box import ChatBox
     from components.upload_box import UploadBox
     from components.status_box import StatusBox
-
     container.clear()
-
     with container:
 
-        # ✅ Row 1: Welcome + Logout
+        # Row 1: Welcome + Logout
         with ui.row().classes("w-full justify-between items-center mb-4"):
             ui.label(f"Welcome User-ID: {userId} into the Document QA ChatBot System").classes("text-2xl font-bold")
 
@@ -76,16 +74,16 @@ def show_dashboard_page(container):
 
             ui.button("Logout", on_click=logout).classes("bg-red-500 text-white")
 
-        # ✅ Row 2: Chat Control Buttons
+        # Row 2: Chat Control Buttons
         with ui.row().classes("w-full justify-center gap-6 mb-6"):
 
             # Placeholder containers for Upload & ChatBox
             chat_area_container = ui.column()
             upload_area_container = ui.column()
-
             
             # New Chat Session Button
             def new_chat_session():
+
                 # Clear previous UI if any
                 chat_area_container.clear()
                 upload_area_container.clear()
@@ -95,7 +93,7 @@ def show_dashboard_page(container):
                 chat_box = ChatBox(str(userId), str(userSessionId))
                 upload_box = UploadBox(str(userId), str(userSessionId), status_box=status_box, chat_box=chat_box)
                 
-                # ✅ Row 3: Left Upload | Right Chatbox
+                # Row 3: Left Upload | Right Chatbox
                 with ui.row().classes("w-full justify-center gap-8"):
                     with upload_area_container:
                         upload_box.render()
@@ -114,7 +112,7 @@ def show_dashboard_page(container):
             # Chat All Session History Button
             def show_chat_all_session_history():
                 ui.notify("Show Chat Session History Work is Pending!", type="info", position="top")
-
+                
             ui.button("All Chat Session History", on_click=show_chat_all_session_history).classes("w-56 bg-gray-1000 text-white")
 
 
