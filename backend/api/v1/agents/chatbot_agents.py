@@ -81,7 +81,7 @@ class ChatBotAgent:
         - userId: Enter loggedIn user userId
         - userSessionId: Enter loggedIn user userSessionId
         """
-        rspDataObj = standard_response(status_code=400, messages=["No chat session history found"], data={})
+        rspDataObj = standard_response(status_code=404, messages=["No chat session history found"], data={})
         try:
             agentInstancesDict = self.get_or_create_agent(userId, userSessionId)
             if len(agentInstancesDict['messages'])>0:
@@ -104,7 +104,7 @@ class ChatBotAgent:
         - userId: Enter loggedIn user userId
         - userSessionId: Enter loggedIn user userSessionId
         """
-        rspDataObj = standard_response(status_code=400, messages=["No chat session history found for reset"], data={})
+        rspDataObj = standard_response(status_code=404, messages=["No chat session history found for reset"], data={})
         try:
             agentInstancesDict = self.get_or_create_agent(userId, userSessionId)
             if len(agentInstancesDict['messages'])>0:

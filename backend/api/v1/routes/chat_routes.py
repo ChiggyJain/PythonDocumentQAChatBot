@@ -70,7 +70,7 @@ async def get_chat_session_history(chat_session_history_request:ChatSessionHisto
     - userId: Enter loggedIn user userId
     - userSessionId: Enter loggedIn user userSessionId
     """
-    chatSessionHistoryRspObj = standard_response(status_code=400, messages=["No chat session history found"], data={})
+    chatSessionHistoryRspObj = standard_response(status_code=404, messages=["No chat session history found"], data={})
     try:
         # print(f"chat_history_request: {chat_history_request}\n")
         userId = chat_session_history_request.userId
@@ -92,7 +92,7 @@ async def reset_chat_session_history(chat_session_history_reset_request:ChatSess
     - userId: Enter loggedIn user userId
     - userSessionId: Enter loggedIn user userSessionId
     """
-    resetChatHistoryRspObj = standard_response(status_code=400, messages=["Chat session history is not reset"], data={})
+    resetChatHistoryRspObj = standard_response(status_code=404, messages=["Chat session history is not reset"], data={})
     try:
         # print(f"chat_history_request: {chat_history_request}\n")
         userId = chat_session_history_reset_request.userId
