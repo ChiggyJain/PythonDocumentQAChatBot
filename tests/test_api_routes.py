@@ -69,7 +69,7 @@ def test_authenticate_user_login_failure():
 
 def test_upload_pdf_success():
     """Test uploading an existing PDF file from disk."""
-    pdf_path = pathlib.Path(__file__).parent/"SampleFileLessThan5MB.pdf"
+    pdf_path = pathlib.Path(__file__).parent/"data/SampleFileLessThan5MB.pdf"
     with open(pdf_path, "rb") as f:
         files = {"file": (pdf_path.name, f, "application/pdf")}
         data = {"userId": "11", "userSessionId": "111"}
@@ -84,7 +84,7 @@ def test_upload_pdf_success():
 
 def test_upload_non_pdf_success():
     """Test uploading an existing PDF file from disk."""
-    pdf_path = pathlib.Path(__file__).parent/"SampleTextFile.txt"
+    pdf_path = pathlib.Path(__file__).parent/"data/SampleTextFile.txt"
     with open(pdf_path, "rb") as f:
         files = {"file": (pdf_path.name, f, "application/pdf")}
         data = {"userId": "11", "userSessionId": "111"}
@@ -99,7 +99,7 @@ def test_upload_non_pdf_success():
 
 def test_upload_pdf_empty_success():
     """Test uploading an existing PDF file from disk."""
-    pdf_path = pathlib.Path(__file__).parent/"SampleBlankFile.pdf"
+    pdf_path = pathlib.Path(__file__).parent/"data/SampleBlankFile.pdf"
     with open(pdf_path, "rb") as f:
         files = {"file": (pdf_path.name, f, "application/pdf")}
         data = {"userId": "11", "userSessionId": "111"}
@@ -114,7 +114,7 @@ def test_upload_pdf_empty_success():
 
 def test_upload_pdf_larger_success():
     """Test uploading an existing PDF file from disk."""
-    pdf_path = pathlib.Path(__file__).parent/"SampleFileGreaterThan5MB.pdf"
+    pdf_path = pathlib.Path(__file__).parent/"data/SampleFileGreaterThan5MB.pdf"
     with open(pdf_path, "rb") as f:
         files = {"file": (pdf_path.name, f, "application/pdf")}
         data = {"userId": "11", "userSessionId": "111"}
